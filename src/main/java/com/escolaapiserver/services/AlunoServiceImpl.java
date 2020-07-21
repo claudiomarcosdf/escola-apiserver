@@ -1,12 +1,20 @@
 package com.escolaapiserver.services;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.escolaapiserver.document.Aluno;
 import com.escolaapiserver.document.Classificacao;
 import com.escolaapiserver.document.Comportamento;
+import com.escolaapiserver.document.Ocorrencia;
+import com.escolaapiserver.document.TabelaComportamento;
+import com.escolaapiserver.document.TipoConduta;
 import com.escolaapiserver.repository.AlunoRepository;
+import com.escolaapiserver.repository.TabelaComportamentoRepository;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -16,6 +24,9 @@ public class AlunoServiceImpl implements AlunoService {
 	
 	@Autowired
 	AlunoRepository alunoRepository;
+	
+	@Autowired
+	TabelaComportamentoRepository tabelaComportamentoRepository;
 
 	@Override
 	public Flux<Aluno> findAll() {
@@ -61,6 +72,49 @@ public class AlunoServiceImpl implements AlunoService {
 	@Override
 	public Mono<Aluno> findByOcorrencias(String id) {
 		return alunoRepository.findByOcorrencias(id);
+	}
+
+	@Override
+	public Mono<Aluno> adicionarOcorrencia(String id, Ocorrencia ocorrencia) {
+
+		return alunoRepository.findById(id).flatMap(alunoFound -> {
+
+			List<Ocorrencia> ocorrencias = new ArrayList<Ocorrencia>(alunoFound.getOcorrencias());
+			Optional<Ocorrencia> ocorrenciaExiste = ocorrencias.stream().filter(ocor -> ocor.equals(ocorrencia)).findFirst();
+
+			if (ocorrenciaExiste.isPresent()) {
+				return Mono.error(new ArrayIndexOutOfBoundsException("Ocorrência já cadastrada!"));
+			}
+
+			ocorrencias.add(ocorrencia);
+
+			alunoFound.setOcorrencias(ocorrencias);
+			//recalcular pontuação do comportamento
+			alunoFound.setComportamento(atualizaComportamento(ocorrencia, alunoFound.getComportamento()));
+			//atualizaComportamento(ocorrencia, alunoFound.getComportamento())
+			
+			return alunoRepository.save(alunoFound);
+		});
+		 		
+	}
+
+	private Comportamento atualizaComportamento(Ocorrencia ocorrencia, Comportamento comportamentoAtual) {
+		
+		double pontuacaoAtual = comportamentoAtual.getPontuacao();
+		
+		if (ocorrencia.getConduta().equals(TipoConduta.Negativa)) {
+			pontuacaoAtual -= ocorrencia.getValor();
+		}
+		
+		comportamentoAtual.setPontuacao(pontuacaoAtual);
+		
+		Mono<TabelaComportamento> tabelaComportamento = tabelaComportamentoRepository.findByClassificacao("Excepcional");
+		tabelaComportamento.map(res -> {
+			comportamentoAtual.setStatus(res.getClassificacao());
+			return comportamentoAtual;
+		});
+		return comportamentoAtual;
+		
 	}
 
 }

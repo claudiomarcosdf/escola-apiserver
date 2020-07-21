@@ -15,6 +15,9 @@ public class TabelaComportamento {
 	@Field("grau_final")
 	private double grauFinal;
 	
+	public TabelaComportamento() {
+	}
+
 	public TabelaComportamento(Classificacao classificacao, double grauInicial, double grauFinal) {
 		this.classificacao = classificacao;
 		this.grauInicial = grauInicial;
