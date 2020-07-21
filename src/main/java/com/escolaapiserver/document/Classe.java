@@ -1,11 +1,19 @@
 package com.escolaapiserver.document;
 
+import java.util.Date;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.mongodb.core.mapping.Field;
+
 public class Classe {
 	
 	private String ano;
 	private String turma;
 	private String turno;
 	private String serie;
+	@CreatedDate
+	@Field("data_matricula")
+	private Date dataMatricula;
 	
 	protected Classe( ) {}
 	
@@ -32,6 +40,14 @@ public class Classe {
 	}
 	public void setSerie(String serie) {
 		this.serie = serie;
+	}
+
+	public Date getDataMatricula() {
+		return dataMatricula;
+	}
+
+	public void setDataMatricula(Date dataMatricula) {
+		this.dataMatricula = dataMatricula;
 	}
 
 }

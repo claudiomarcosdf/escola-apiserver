@@ -10,6 +10,7 @@ public interface AlunoService {
 	Flux<Aluno> findAll();
 	Mono<Aluno> findById(String id);
 	Flux<Aluno> findBySituacao(String situacao);
+	Mono<Aluno> findByOcorrencias(String id); //Retorna o objeto aluno completo
 	Mono<Aluno> matriculaExiste(String matricula);
 	
 	Mono<Aluno> save(Aluno aluno);

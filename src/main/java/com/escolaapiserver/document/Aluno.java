@@ -6,15 +6,21 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.index.IndexDirection;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Document
+@JsonIgnoreProperties({"createdDate", "createdUser", "modifiedUser", "lastModifiedDate"})
 public class Aluno {
 
 	@Id
@@ -32,13 +38,23 @@ public class Aluno {
 	@Indexed(direction = IndexDirection.DESCENDING)
 	private List<Ocorrencia> ocorrencias;
 	private String situacao;
+	@CreatedDate
+	private Date createdDate;
+	@CreatedBy
+	private String createdUser;
+	@LastModifiedBy
+	private String modifiedUser;
+	@LastModifiedDate
+	private Date lastModifiedDate;	
+	
 
 	public Aluno() {
 		this.ocorrencias = new ArrayList<>();
 	}
 
-	public Aluno(String matricula, String nome, String telefone, String patente, Classe classe, Date dataNascimento,
-			Comportamento comportamento, String situacao, List<Ocorrencia> ocorrencias) {
+	public Aluno(String matricula, String nome, String telefone, String patente, Date dataNascimento,
+			Classe classe, Comportamento comportamento, List<Ocorrencia> ocorrencias, String situacao, Date createdDate,
+			String createdUser, String modifiedUser, Date lastModifiedDate) {
 		this.matricula = matricula;
 		this.nome = nome;
 		this.telefone = telefone;
@@ -46,8 +62,12 @@ public class Aluno {
 		this.dataNascimento = dataNascimento;
 		this.classe = classe;
 		this.comportamento = comportamento;
-		this.situacao = situacao;
 		this.ocorrencias = ocorrencias;
+		this.situacao = situacao;
+		this.createdDate = createdDate;
+		this.createdUser = createdUser;
+		this.modifiedUser = modifiedUser;
+		this.lastModifiedDate = lastModifiedDate;
 	}
 
 	public String getId() {
@@ -125,6 +145,38 @@ public class Aluno {
 	public void setSituacao(String situacao) {
 		this.situacao = situacao;
 	}	
+
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public String getCreatedUser() {
+		return createdUser;
+	}
+
+	public void setCreatedUser(String createdUser) {
+		this.createdUser = createdUser;
+	}
+
+	public String getModifiedUser() {
+		return modifiedUser;
+	}
+
+	public void setModifiedUser(String modifiedUser) {
+		this.modifiedUser = modifiedUser;
+	}
+
+	public Date getLastModifiedDate() {
+		return lastModifiedDate;
+	}
+
+	public void setLastModifiedDate(Date lastModifiedDate) {
+		this.lastModifiedDate = lastModifiedDate;
+	}
 
 	@Override
 	public int hashCode() {

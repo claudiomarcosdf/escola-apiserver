@@ -1,11 +1,14 @@
 package com.escolaapiserver.document;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Comportamento {
 	
 	private Classificacao status;
 	private double pontuacao;
 	
-	protected Comportamento() {}
+	public Comportamento() {}
 
 	public Classificacao getStatus() {
 		return status;
