@@ -1,5 +1,8 @@
 package com.escolaapiserver.document;
 
+import java.text.NumberFormat;
+import java.util.Locale;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -19,7 +22,11 @@ public class Comportamento {
 	}
 
 	public double getPontuacao() {
-		return pontuacao;
+		Locale locale = Locale.ENGLISH;
+		NumberFormat nf = NumberFormat.getNumberInstance(locale);
+		nf.setMaximumFractionDigits(2);
+		
+		return Double.valueOf(nf.format(pontuacao));
 	}
 
 	public void setPontuacao(double pontuacao) {

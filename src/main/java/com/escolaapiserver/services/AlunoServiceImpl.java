@@ -85,36 +85,36 @@ public class AlunoServiceImpl implements AlunoService {
 			if (ocorrenciaExiste.isPresent()) {
 				return Mono.error(new ArrayIndexOutOfBoundsException("Ocorrência já cadastrada!"));
 			}
-
+				
 			ocorrencias.add(ocorrencia);
-
+				
 			alunoFound.setOcorrencias(ocorrencias);
 			//recalcular pontuação do comportamento
-			alunoFound.setComportamento(atualizaComportamento(ocorrencia, alunoFound.getComportamento()));
-			//atualizaComportamento(ocorrencia, alunoFound.getComportamento())
 			
-			return alunoRepository.save(alunoFound);
-		});
-		 		
-	}
+			Double pontuacaoAtual = alunoFound.getComportamento().getPontuacao();
+			
+			if (ocorrencia.getConduta().equals(TipoConduta.Negativa)) {
+				pontuacaoAtual -= ocorrencia.getValor();
+			} else {
+				pontuacaoAtual += ocorrencia.getValor();
+			}
+			
+			final Double novaPontuacao = pontuacaoAtual;
+			
+			Mono<TabelaComportamento> tabelaComportamento = tabelaComportamentoRepository.findByBetween(novaPontuacao);
+			return tabelaComportamento.flatMap(tbcomportamento -> {
+				Comportamento comportamento = new Comportamento();
+				comportamento.setPontuacao(novaPontuacao);
+				comportamento.setStatus(tbcomportamento.getClassificacao());
+				
+				alunoFound.setComportamento(comportamento);
+				
+				return Mono.just(alunoFound);
+			});
 
-	private Comportamento atualizaComportamento(Ocorrencia ocorrencia, Comportamento comportamentoAtual) {
-		
-		double pontuacaoAtual = comportamentoAtual.getPontuacao();
-		
-		if (ocorrencia.getConduta().equals(TipoConduta.Negativa)) {
-			pontuacaoAtual -= ocorrencia.getValor();
-		}
-		
-		comportamentoAtual.setPontuacao(pontuacaoAtual);
-		
-		Mono<TabelaComportamento> tabelaComportamento = tabelaComportamentoRepository.findByClassificacao("Excepcional");
-		tabelaComportamento.map(res -> {
-			comportamentoAtual.setStatus(res.getClassificacao());
-			return comportamentoAtual;
-		});
-		return comportamentoAtual;
-		
+			
+		}).flatMap(aluno -> alunoRepository.save(aluno));
+		 		
 	}
 
 }
