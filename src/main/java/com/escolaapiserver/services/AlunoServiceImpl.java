@@ -44,7 +44,7 @@ public class AlunoServiceImpl implements AlunoService {
 	}
 
 	@Override
-	public Mono<Aluno> matriculaExiste(String matricula) {
+	public Mono<Aluno> matriculaExists(String matricula) {
 		return alunoRepository.findByMatricula(matricula);
 	}
 
@@ -75,7 +75,7 @@ public class AlunoServiceImpl implements AlunoService {
 	}
 
 	@Override
-	public Mono<Aluno> adicionarOcorrencia(String id, Ocorrencia ocorrencia) {
+	public Mono<Aluno> addOcorrencia(String id, Ocorrencia ocorrencia) {
 
 		return alunoRepository.findById(id).flatMap(alunoFound -> {
 
@@ -89,19 +89,25 @@ public class AlunoServiceImpl implements AlunoService {
 			ocorrencias.add(ocorrencia);
 				
 			alunoFound.setOcorrencias(ocorrencias);
-			//recalcular pontuação do comportamento
 			
+			//recalcular pontuação do comportamento
 			Double pontuacaoAtual = alunoFound.getComportamento().getPontuacao();
 			
 			if (ocorrencia.getConduta().equals(TipoConduta.Negativa)) {
 				pontuacaoAtual -= ocorrencia.getValor();
+				if (pontuacaoAtual < 0) {
+					pontuacaoAtual = 0.00;
+				}
 			} else {
 				pontuacaoAtual += ocorrencia.getValor();
+				if (pontuacaoAtual > 10) {
+					pontuacaoAtual = 10.00;
+				}
 			}
 			
 			final Double novaPontuacao = pontuacaoAtual;
 			
-			Mono<TabelaComportamento> tabelaComportamento = tabelaComportamentoRepository.findByBetween(novaPontuacao);
+			Mono<TabelaComportamento> tabelaComportamento = tabelaComportamentoRepository.findByGrauRange(novaPontuacao);
 			return tabelaComportamento.flatMap(tbcomportamento -> {
 				Comportamento comportamento = new Comportamento();
 				comportamento.setPontuacao(novaPontuacao);

@@ -12,7 +12,7 @@ public class UserAuditing implements AuditorAware<String> {
 	public Optional<String> getCurrentAuditor() {
 		//String userName = SecurityContextHolder.getContext().getAuthentication().getName();
 		
-		return Optional.of("master");
+		return Optional.of("master"); //usuário temporário
 	}
 	
 	

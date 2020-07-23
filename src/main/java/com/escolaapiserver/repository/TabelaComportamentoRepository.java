@@ -12,6 +12,6 @@ import reactor.core.publisher.Mono;
 public interface TabelaComportamentoRepository extends ReactiveMongoRepository<TabelaComportamento, String> {
    
     @Query("{grauInicial : { $lte: ?0} , grauFinal : {$gte: ?0 } }")	
-	Mono<TabelaComportamento> findByBetween(double pontuacao);
+	Mono<TabelaComportamento> findByGrauRange(double pontuacao);
 
 }

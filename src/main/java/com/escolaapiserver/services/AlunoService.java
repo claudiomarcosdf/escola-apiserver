@@ -12,9 +12,9 @@ public interface AlunoService {
 	Mono<Aluno> findById(String id);
 	Flux<Aluno> findBySituacao(String situacao);
 	Mono<Aluno> findByOcorrencias(String id); //Retorna o objeto aluno completo
-	Mono<Aluno> matriculaExiste(String matricula);
+	Mono<Aluno> matriculaExists(String matricula);
 	
-	Mono<Aluno> adicionarOcorrencia(String id, Ocorrencia ocorrencia);
+	Mono<Aluno> addOcorrencia(String id, Ocorrencia ocorrencia);
 	Mono<Aluno> save(Aluno aluno);
 	Mono<Void> delete(Aluno aluno);
 }

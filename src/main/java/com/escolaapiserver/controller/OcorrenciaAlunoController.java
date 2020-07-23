@@ -31,7 +31,7 @@ public class OcorrenciaAlunoController {
 	@PutMapping("/{id}")
 	private Mono<OcorrenciasDTO> addOcorrencia(@PathVariable("id") String id, @RequestBody Ocorrencia ocorrencia) {
 		
-		return alunoService.adicionarOcorrencia(id, ocorrencia)
+		return alunoService.addOcorrencia(id, ocorrencia)
 				.map(alunoOcorrencias -> new OcorrenciasDTO(alunoOcorrencias))
 				.switchIfEmpty(Mono.error(new Exception("Erro ao incluir ocorrência")));
 		

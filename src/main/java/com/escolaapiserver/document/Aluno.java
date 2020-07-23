@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -18,6 +18,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.mongodb.lang.NonNull;
 
 @Document
 @JsonIgnoreProperties({"createdDate", "createdUser", "modifiedUser", "lastModifiedDate"})
@@ -25,7 +26,7 @@ public class Aluno {
 
 	@Id
 	private String id;
-	@NotNull
+	@NonNull @NotBlank
 	private String matricula;
 	private String nome;
 	private String telefone;

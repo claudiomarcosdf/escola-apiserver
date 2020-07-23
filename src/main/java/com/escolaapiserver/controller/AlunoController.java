@@ -53,7 +53,7 @@ public class AlunoController {
 	//TAMBÉM NÃO INFORMAR O COMPORTAMENTO, POIS O SISTEMA GERARÁ O PADRÃO
 	@PostMapping
 	public Mono<ResponseEntity<Aluno>> createAluno(@Valid @RequestBody Aluno aluno) {
-		return alunoService.matriculaExiste(aluno.getMatricula())
+		return alunoService.matriculaExists(aluno.getMatricula())
 				.hasElement()
 				.flatMap(foundAluno -> {
 					if (foundAluno) {
@@ -69,7 +69,7 @@ public class AlunoController {
 	//NÃO É NECESSÁRIO ENVIAR O OBJETO COM OS DADOS DA AUDITORIA
 	@PutMapping("/{id}")
 	public Mono<ResponseEntity<Aluno>> updateAluno(@Valid @PathVariable String id, @RequestBody Aluno aluno) {
-		return alunoService.matriculaExiste(aluno.getMatricula())
+		return alunoService.matriculaExists(aluno.getMatricula())
 				.flatMap(foundAluno -> {
 					if (foundAluno.getMatricula().equals(aluno.getMatricula()) && !foundAluno.getId().equals(aluno.getId())) {
 						return Mono.error(new MatriculaExistenteException("Matrícula já cadastrada"));
